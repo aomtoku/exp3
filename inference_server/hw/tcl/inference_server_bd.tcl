@@ -29,7 +29,7 @@
 #
 
 # Vivado Launch Script
-set design changefinder_nic 
+set design inference_server
 set device xc7vx690t-3-ffg1761
 set proj_dir ./project
 
@@ -43,7 +43,7 @@ set nf_10g_constraints ./constraints/nf_sume_10g_bd.xdc
 #####################################
 # Read IP Addresses and export registers
 #####################################
-source ./tcl/changefinder_nic_defines.tcl
+source ./tcl/inference_server_defines.tcl
 source ./tcl/export_registers.tcl
 
 create_project -name ${design} -force -dir "./${proj_dir}" -part ${device}
@@ -147,8 +147,8 @@ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnec
 set_property -dict [list CONFIG.NUM_SI {2} CONFIG.NUM_MI {13}] [get_bd_cells axi_interconnect_0]
 
 # Create external ports and make connection
-source ./tcl/changefinder_nic_bd_port.tcl
-source ./tcl/changefinder_nic_bd_connection.tcl
+source ./tcl/inference_server_bd_port.tcl
+source ./tcl/inference_server_bd_connection.tcl
 
 # Bus register map address configuration
 create_bd_addr_seg -range ${MICROBLAZE_DLMB_BRAM_SIZEADDR} -offset ${MICROBLAZE_DLMB_BRAM_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \

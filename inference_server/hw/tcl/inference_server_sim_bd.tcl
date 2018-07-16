@@ -29,7 +29,7 @@
 #
 
 # Vivado Launch Script
-set design changefinder_nic 
+set design inference_server
 set device xc7vx690t-3-ffg1761
 set proj_dir ./project
 
@@ -44,7 +44,7 @@ set test_name [lindex $argv 0]
 #####################################
 # Read IP Addresses and export registers
 #####################################
-source $::env(NF_DESIGN_DIR)/hw/tcl/changefinder_nic_defines.tcl
+source $::env(NF_DESIGN_DIR)/hw/tcl/inference_server_defines.tcl
 
 create_project -name ${design} -force -dir "$::env(NF_DESIGN_DIR)/hw/${proj_dir}" -part ${device}
 
@@ -118,8 +118,8 @@ set_property -dict [list CONFIG.NUM_SI {1} CONFIG.NUM_MI {4}] $axi_interconnect_
 
 
 ## Create external ports and make connection
-source $::env(NF_DESIGN_DIR)/hw/tcl/changefinder_nic_bd_port_sim.tcl
-source $::env(NF_DESIGN_DIR)/hw/tcl/changefinder_nic_bd_connection_sim.tcl
+source $::env(NF_DESIGN_DIR)/hw/tcl/inference_server_bd_port_sim.tcl
+source $::env(NF_DESIGN_DIR)/hw/tcl/inference_server_bd_connection_sim.tcl
 
 update_ip_catalog
 
