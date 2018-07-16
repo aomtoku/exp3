@@ -1,0 +1,48 @@
+###########################################################
+#  WOMBAT design scripts                                  #
+#  All rights reserved (C) 2018 Yuta Tokusashi            #
+#                            Last updated 16th/Jul/2018   #
+###########################################################
+
+Requirements
+========================================================
+ - Xilinx Vivado 2016.4
+ - Ubuntu 14.04 (LTS) / 16.04 (LTS) / 18.04 (LTS)
+
+How to build
+========================================================
+ $ make
+
+How to simulate
+========================================================
+ $ cp <your pcap file> ./sim
+ $ ./sim/tool/pcap2rom -r <your pcap file> -w test.rom -p 10 -f 1
+ $ make -C sim
+
+How to view signal waves 
+========================================================
+ $ make -C sim xsim-gui
+
+How to generate verilog files and TCL files from HLS
+========================================================
+ $ make -C hls
+ $ make -C hls update
+
+How to simulate in C 
+========================================================
+ $ make -C hls csim 
+
+How to simulate in C/RTL co-simulation
+========================================================
+ $ make -C hls cosim 
+
+Viewing report for HLS compile
+========================================================
+ $ make -C hls report
+
+
+
+Tokusashi's TODO :
+=====================================================
+ - Questa Simulation TCLs
+ - adding manual mode to add value to the sdar from host machine 
