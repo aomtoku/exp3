@@ -29,8 +29,8 @@
 #
 # Vivado Launch Script
 #### Change design settings here #######
-set design sdar
-set top sdar
+set design wombat
+set top wombat
 set device xc7vx690t-3-ffg1761
 set proj_dir ./synth
 set ip_version 1.00
@@ -66,8 +66,8 @@ foreach file ${tcls} {
 	}
 }
 
-read_verilog "./hdl/verilog/sdar.v"
-read_verilog "./hdl/verilog/sdar_cpu_regs.v"
+read_verilog "./hdl/verilog/wombat.v"
+read_verilog "./hdl/verilog/wombat_cpu_regs.v"
 read_verilog "./hdl/verilog/asfifo.v"
 read_verilog "./hdl/verilog/graycounter.v"
 read_verilog "./hdl/verilog/mmcm_wrapper.v"
