@@ -3,8 +3,8 @@
  * All rights reserved (C) 2017 Yuta Tokusashi                    *
  *****************************************************************/
 `timescale 1ns/1ns
-`include "sdar_cpu_regs_defines.v"
-module sdar_cpu_regs # (
+`include "wombat_cpu_regs_defines.v"
+module wombat_cpu_regs # (
 	parameter C_BASE_ADDRESS        = 32'h00000000,
 	parameter C_S_AXI_DATA_WIDTH    = 32,
 	parameter C_S_AXI_ADDR_WIDTH    = 32

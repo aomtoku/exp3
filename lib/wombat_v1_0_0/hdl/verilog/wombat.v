@@ -1,11 +1,11 @@
 /******************************************************************
  * SDAR module                                                    *
- * All rights reserved (C) 2017 Yuta Tokusashi                    *
+ * All rights reserved (C) 2018 Yuta Tokusashi                    *
  *****************************************************************/
 `timescale 1ns/1ps
-`include "sdar_cpu_regs_defines.v"
+`include "wombat_cpu_regs_defines.v"
 
-module sdar #(
+module wombat #(
 	//Master AXI Stream Data Width
 	parameter C_M_AXIS_DATA_WIDTH  = 256,
 	parameter C_S_AXIS_DATA_WIDTH  = 256,
@@ -394,11 +394,11 @@ wire clear_counters;
 wire reset_registers;
 wire reset_tables;
 wire resetn_sync;
-sdar_cpu_regs #(
+wombat_cpu_regs #(
 	.C_S_AXI_DATA_WIDTH ( C_S_AXI_DATA_WIDTH ),
 	.C_S_AXI_ADDR_WIDTH ( C_S_AXI_ADDR_WIDTH ),
 	.C_BASE_ADDRESS     ( C_BASEADDR         )
-) u_sdar_regs (   
+) u_wombat_regs (   
 	// General ports
 	.clk                    (axis_aclk),
 	.resetn                 (axis_resetn_vec2[3]),
