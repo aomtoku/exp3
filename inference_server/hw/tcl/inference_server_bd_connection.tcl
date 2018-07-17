@@ -121,7 +121,7 @@ connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins axi_interconnect_
 connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins axi_interconnect_0/AClk]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins input_arbiter_0/S_AXI_AClK]
 # tokusashi added 20171006
-connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins sdar_0/S_AXI_AClK]
+connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins wombat_0/S_AXI_AClK]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins nic_output_port_lookup_0/S_AXI_AClK]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins output_queues_0/S_AXI_AClK]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out1] [get_bd_pins nf_10g_interface_0/S_AXI_AClK]
@@ -138,7 +138,7 @@ connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins nf_10g_interface_
 connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins nf_10g_interface_3/core_clk]
 
 # tokusashi added 20171006
-connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins sdar_0/axis_aclk]
+connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins wombat_0/axis_aclk]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins input_arbiter_0/axis_aclk]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins nic_output_port_lookup_0/axis_aclk]
 connect_bd_net [get_bd_pins sys_clock_0/clk_out2] [get_bd_pins output_queues_0/axis_aclk]
@@ -172,13 +172,13 @@ connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins nf
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins nf_10g_interface_3/core_resetn] 
 
 # tokusashi added 20171006
-connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins sdar_0/axis_resetn]
+connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins wombat_0/axis_resetn]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins input_arbiter_0/axis_resetn]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins nic_output_port_lookup_0/axis_resetn]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins output_queues_0/axis_resetn]
 
 # tokusashi added 20171006
-connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins sdar_0/S_AXI_ARESETN]
+connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins wombat_0/S_AXI_ARESETN]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins input_arbiter_0/S_AXI_ARESETN]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins nic_output_port_lookup_0/S_AXI_ARESETN]
 connect_bd_net [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins output_queues_0/S_AXI_ARESETN]
@@ -210,7 +210,7 @@ connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M0
 connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M10_AXI] [get_bd_intf_pins nf_sume_dma/s_axi_lite] 
 connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M11_AXI] [get_bd_intf_pins nf_identifier_0/S_AXI] 
 # tokusashi added 20171006
-connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M12_AXI] [get_bd_intf_pins sdar_0/S_AXI] 
+connect_bd_intf_net -boundary_type upper [get_bd_intf_pins axi_interconnect_0/M12_AXI] [get_bd_intf_pins wombat_0/S_AXI] 
 
 connect_bd_net [get_bd_pins mbsys/In0] [get_bd_pins axi_iic_0/iic2intc_irpt]
 connect_bd_net [get_bd_pins mbsys/In1] [get_bd_pins axi_uartlite_0/interrupt]
@@ -223,8 +223,8 @@ connect_bd_intf_net [get_bd_intf_pins nf_10g_interface_3/m_axis] [get_bd_intf_pi
 connect_bd_intf_net [get_bd_intf_pins nf_sume_dma/m_axis] [get_bd_intf_pins input_arbiter_0/s_axis_4]
 
 # tokusashi modified 20171006
-connect_bd_intf_net [get_bd_intf_pins input_arbiter_0/m_axis] [get_bd_intf_pins sdar_0/s_axis]
-connect_bd_intf_net [get_bd_intf_pins sdar_0/m_axis] [get_bd_intf_pins nic_output_port_lookup_0/s_axis]
+connect_bd_intf_net [get_bd_intf_pins input_arbiter_0/m_axis] [get_bd_intf_pins wombat_0/s_axis]
+connect_bd_intf_net [get_bd_intf_pins wombat_0/m_axis] [get_bd_intf_pins nic_output_port_lookup_0/s_axis]
 connect_bd_intf_net [get_bd_intf_pins nic_output_port_lookup_0/m_axis] [get_bd_intf_pins output_queues_0/s_axis]
 
 connect_bd_intf_net [get_bd_intf_pins output_queues_0/m_axis_0] [get_bd_intf_pins nf_10g_interface_0/s_axis]

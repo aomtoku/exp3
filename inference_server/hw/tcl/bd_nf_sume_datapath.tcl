@@ -108,21 +108,21 @@ proc create_hier_cell_nf_sume_datapath { parentCell coreName tdataWidth} {
    set_property -dict [list CONFIG.C_M_AXIS_DATA_WIDTH $tdataWidth] $output_queues_0
    set_property -dict [list CONFIG.C_S_AXIS_DATA_WIDTH $tdataWidth] $output_queues_0
  
-   set input_arbiter_0 [create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:sdar:1.00 sdar_0]
-   set_property -dict [list CONFIG.C_M_AXIS_DATA_WIDTH $tdataWidth] $sdar_0
-   set_property -dict [list CONFIG.C_S_AXIS_DATA_WIDTH $tdataWidth] $sdar_0
+   set input_arbiter_0 [create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:wombat:1.00 wombat_0]
+   set_property -dict [list CONFIG.C_M_AXIS_DATA_WIDTH $tdataWidth] $wombat_0
+   set_property -dict [list CONFIG.C_S_AXIS_DATA_WIDTH $tdataWidth] $wombat_0
 
    # External port connections  
    # axis
    connect_bd_net [get_bd_pins axis_aclk] [get_bd_pins input_arbiter_0/axis_aclk]  
    connect_bd_net [get_bd_pins axis_aclk] [get_bd_pins nic_output_port_lookup_0/axis_aclk]
    connect_bd_net [get_bd_pins axis_aclk] [get_bd_pins output_queues_0/axis_aclk]
-   connect_bd_net [get_bd_pins axis_aclk] [get_bd_pins sdar_0/axis_aclk]  
+   connect_bd_net [get_bd_pins axis_aclk] [get_bd_pins wombat_0/axis_aclk]  
    
    connect_bd_net [get_bd_pins axis_resetn] [get_bd_pins input_arbiter_0/axis_resetn]  
    connect_bd_net [get_bd_pins axis_resetn] [get_bd_pins nic_output_port_lookup_0/axis_resetn]
    connect_bd_net [get_bd_pins axis_resetn] [get_bd_pins output_queues_0/axis_resetn]
-   connect_bd_net [get_bd_pins axis_resetn] [get_bd_pins sdar_0/axis_resetn]  
+   connect_bd_net [get_bd_pins axis_resetn] [get_bd_pins wombat_0/axis_resetn]  
 
    # interfaces
    connect_bd_intf_net [get_bd_intf_pin s_axis_0] [get_bd_intf_pins input_arbiter_0/s_axis_0]
@@ -141,22 +141,22 @@ proc create_hier_cell_nf_sume_datapath { parentCell coreName tdataWidth} {
    connect_bd_net [get_bd_pins s_axi_aclk] [get_bd_pins input_arbiter_0/S_AXI_ACLK] 
    connect_bd_net [get_bd_pins s_axi_aclk] [get_bd_pins nic_output_port_lookup_0/S_AXI_ACLK] 
    connect_bd_net [get_bd_pins s_axi_aclk] [get_bd_pins output_queues_0/S_AXI_ACLK] 
-   connect_bd_net [get_bd_pins s_axi_aclk] [get_bd_pins sdar_0/S_AXI_ACLK] 
+   connect_bd_net [get_bd_pins s_axi_aclk] [get_bd_pins wombat_0/S_AXI_ACLK] 
 
    connect_bd_net [get_bd_pins s_axi_aresetn] [get_bd_pins input_arbiter_0/S_AXI_ARESETN]
    connect_bd_net [get_bd_pins s_axi_aresetn] [get_bd_pins nic_output_port_lookup_0/S_AXI_ARESETN]
    connect_bd_net [get_bd_pins s_axi_aresetn] [get_bd_pins output_queues_0/S_AXI_ARESETN]
-   connect_bd_net [get_bd_pins s_axi_aresetn] [get_bd_pins sdar_0/S_AXI_ARESETN]
+   connect_bd_net [get_bd_pins s_axi_aresetn] [get_bd_pins wombat_0/S_AXI_ARESETN]
 
    # interfaces
    connect_bd_intf_net [get_bd_intf_pins s_axi_lite_0] [get_bd_intf_pins input_arbiter_0/S_AXI]
    connect_bd_intf_net [get_bd_intf_pins s_axi_lite_1] [get_bd_intf_pins nic_output_port_lookup_0/S_AXI] 
    connect_bd_intf_net [get_bd_intf_pins s_axi_lite_2] [get_bd_intf_pins output_queues_0/S_AXI] 
-   connect_bd_intf_net [get_bd_intf_pins s_axi_lite_0] [get_bd_intf_pins sdar_0/S_AXI]
+   connect_bd_intf_net [get_bd_intf_pins s_axi_lite_0] [get_bd_intf_pins wombat_0/S_AXI]
 
    # Internal connection
-   connect_bd_intf_net [get_bd_intf_pins input_arbiter_0/m_axis] [get_bd_intf_pins sdar_0/s_axis]
-   connect_bd_intf_net [get_bd_intf_pins sdar_0/m_axis] [get_bd_intf_pins nic_output_port_lookup_0/s_axis]
+   connect_bd_intf_net [get_bd_intf_pins input_arbiter_0/m_axis] [get_bd_intf_pins wombat_0/s_axis]
+   connect_bd_intf_net [get_bd_intf_pins wombat_0/m_axis] [get_bd_intf_pins nic_output_port_lookup_0/s_axis]
    connect_bd_intf_net [get_bd_intf_pins nic_output_port_lookup_0/m_axis] [get_bd_intf_pins output_queues_0/s_axis]
 
    # Restore current instance

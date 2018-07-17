@@ -130,7 +130,7 @@ create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:input_arbiter:1.00 input_arbiter_0
 create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:nic_output_port_lookup:1.00 nic_output_port_lookup_0
 create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:output_queues:1.00 output_queues_0
 ## tokusashi 20171006 added##
-create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:sdar:1.00 sdar_0
+create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:wombat:1.00 wombat_0
 
 create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:nf_10ge_interface_shared:1.00 nf_10g_interface_0
 create_bd_cell -type ip -vlnv NetFPGA:NetFPGA:nf_10ge_interface:1.00 nf_10g_interface_1
@@ -170,9 +170,9 @@ create_bd_addr_seg -range ${MICROBLAZE_UARTLITE_SIZEADDR} -offset ${MICROBLAZE_U
 
 # tokusashi 20171006 added
 create_bd_addr_seg -range ${SDAR_SIZEADDR} -offset ${SDAR_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \
-   [get_bd_addr_segs sdar_0/S_AXI/reg0] SEG_sdar_0_reg0
+   [get_bd_addr_segs wombat_0/S_AXI/reg0] SEG_wombat_0_reg0
 create_bd_addr_seg -range ${SDAR_SIZEADDR} -offset ${SDAR_BASEADDR} [get_bd_addr_spaces nf_sume_dma/nf_riffa_dma_0/m_axi_lite] \
-   [get_bd_addr_segs sdar_0/S_AXI/reg0] SEG_sdar_0_reg0
+   [get_bd_addr_segs wombat_0/S_AXI/reg0] SEG_wombat_0_reg0
 
 create_bd_addr_seg -range ${INPUT_ARBITER_SIZEADDR} -offset ${INPUT_ARBITER_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \
    [get_bd_addr_segs input_arbiter_0/S_AXI/reg0] SEG_input_arbiter_0_reg0
