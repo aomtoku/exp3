@@ -1,6 +1,6 @@
 
 SRC := ../src/../src/predict_exp3.cpp
-TB  := ../src/tb.c
+TB  := ../src/exp3_test.cpp
 TOP_FUNC := predict
 
 all: clean export
