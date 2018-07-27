@@ -17,14 +17,14 @@ set tb  [lindex $argv 6]
 open_project -reset ${prj}
 set_top ${top}
 add_files ${src}
-foreach cfile ${src} {
-	if {[string match *.c ${cfile}]} {
-		add_files ${cfile}
-	}
-}
+#foreach cfile ${src} {
+#	if {[string match *.c ${cfile}]} {
+#		add_files ${cfile}
+#	}
+#}
 
 foreach tfile ${tb} {
-	if {[string match *.c ${tfile}]} {
+	if {[string match *.cpp ${tfile}]} {
 		add_files -tb ${tfile}
 	}
 }

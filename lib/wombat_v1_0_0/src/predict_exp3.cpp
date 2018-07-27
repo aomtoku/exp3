@@ -42,12 +42,12 @@ int predict(FIX_T x[1][LAYER1], FIX_T w1[LAYER1][LAYER2], FIX_T w2[LAYER2][LAYER
 
 //#pragma HLS array_partition variable=w1 cyclic factor=8 dim=1
 //#pragma HLS array_partition variable=x cyclic factor=8 dim=2
-#pragma HLS array_partition variable=w1 complete dim=1
-#pragma HLS array_partition variable=x complete dim=2
-#pragma HLS array_partition variable=w2 cyclic factor=5 dim=2
-#pragma HLS array_partition variable=a2 cyclic factor=5 dim=2
-#pragma HLS array_partition variable=w3 cyclic factor=5 dim=1
-#pragma HLS array_partition variable=b2 cyclic factor=5
+//#pragma HLS array_partition variable=w1 complete dim=1
+//#pragma HLS array_partition variable=x complete dim=2
+//#pragma HLS array_partition variable=w2 cyclic factor=5 dim=2
+//#pragma HLS array_partition variable=a2 cyclic factor=5 dim=2
+//#pragma HLS array_partition variable=w3 cyclic factor=5 dim=1
+//#pragma HLS array_partition variable=b2 cyclic factor=5
 
 	/* Exp3 */
 	/* Initialization */
