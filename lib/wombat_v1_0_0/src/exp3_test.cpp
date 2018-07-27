@@ -31,14 +31,14 @@ int main()
     int t, T, r, mode;
     float Gamma, p;
 
-    fp = fopen("./one_images.txt", "r");
+    fp = fopen("../../../../../src/one_images.txt", "r");
     for (i = 0; i < LAYER1; i++) {
     	fscanf(fp, "%f", &val);
     	x[0][i] = val / 255.0;
     }
     fclose(fp);
 
-    fp = fopen("./adam-ep10-val_loss0.10329-val_acc0.97080.txt", "r");
+    fp = fopen("../../../../../src/adam-ep10-val_loss0.10329-val_acc0.97080.txt", "r");
     for (i = 0; i < LAYER1; i++) {
     	for (j = 0; j < LAYER2; j++) {
     		fscanf(fp, "%f", &val);
