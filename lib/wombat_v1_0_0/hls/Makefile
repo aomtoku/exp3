@@ -1,5 +1,5 @@
 
-SRC := ../src/../src/predict_exp3.cpp
+SRC := ../src/predict_exp3.cpp
 TB  := ../src/exp3_test.cpp
 TOP_FUNC := predict
 
