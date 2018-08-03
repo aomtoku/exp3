@@ -1,5 +1,5 @@
-#include "ap_int.h"
 #include "top.h"
+#include "predict_exp3.cpp"
 
 #define WEIGHT_ENABLE
 
@@ -10,7 +10,7 @@ uint256_t sample(hls::stream<uint256_t>& in, float gamma,
 	int res;
 	uint256_t var = 0;
 	//uint256_t ram[32];
-	FIT_T ram[784];
+	FIT_T ram[1][784];
 
 #ifdef WEIGHT_ENABLE
 	FIT_T w1[784][50] = 
@@ -1071,7 +1071,7 @@ uint256_t sample(hls::stream<uint256_t>& in, float gamma,
 	for (int i = 0; i < ITERATE_FRAME; i++) {
 		var = in.read();
 		for (int j = 0; j < ITERATE_AXIS_FLIT; j++) {
-			ram[i+j] = (FIX_T)(var & 0xffff);
+			ram[0][i+j] = (FIX_T)(var & 0xff) / 255.0;
 			var = var >> FIX_T_BITS_WIDTH;
 		}
 	}
