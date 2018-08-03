@@ -37,7 +37,7 @@ int main(void)
 			mode = 1;
 		r = rand() % 10000;
 		p = (float)r / 10000.0;
-		res = sample(st, gamma. p mode);
+		res = sample(st, gamma, p, mode);
 		printf("Result: %d \n", res);
 	}
 
