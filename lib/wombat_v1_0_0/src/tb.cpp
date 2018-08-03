@@ -4,20 +4,20 @@
 
 int main(void)
 {
-	int i, j = 0, p = 0;
+	int i, j = 0;
 	uint8_t data;
-	uint256_t res, in;
+	int res, t, r, mode;
+	float p;
+	FILE *fp;
+	uint256_t in, td[ITERATE_FRAME];
 	hls::stream<uint256_t> st;
 
 	const float gamma = 0.5;
 	const int T = 5;
-	int t,r;
-	float p;
-	int mode;
 	srand((unsigned)time(NULL));
 
 	fp = fopen("../../../../../src/one_images.txt", "r");
-	for (i = 0; i < LAYER1; i++) {
+	for (i = 0; i < LAYER1_PARAM; i++) {
 		fscanf(fp, "%u", &data);
 		in = (in<<8) | (data & 0xff);
 		if (j+1 % AXIS_BYTE_WIDTH == 0)
