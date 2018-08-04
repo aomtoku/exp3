@@ -75,6 +75,12 @@ int main()
     T = 5;
     Gamma = 0.5;
 
+    static const FIX_T ww1[LAYER1][LAYER2] = w1;
+	static const FIX_T ww2[LAYER2][LAYER3] = w2;
+	static const FIX_T ww3[LAYER3][LAYER4] = w3;
+	static const FIX_T bb1[LAYER2] = b1;
+	static const FIX_T bb2[LAYER3] = b2; 
+	static const FIX_T bb3[LAYER4] = b3;
     for (t = 0; t < T; t++) {
     	if (t == 0)
     		mode = 0;
@@ -82,7 +88,7 @@ int main()
     		mode = 1;
     	r = rand() % 10000;
     	p = (float)r / 10000.0;
-    	result = predict(x, w1, w2, w3, b1, b2, b3, Gamma, p, mode);
+    	result = predict(x, ww1, ww2, ww3, bb1, bb2, bb3, Gamma, p, mode);
     	printf("result = %d\n", result);
     }
 

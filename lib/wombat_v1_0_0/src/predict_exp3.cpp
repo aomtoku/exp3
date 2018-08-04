@@ -27,8 +27,8 @@ struct MULT_CONFIG_FAST3: hls::matrix_multiply_traits <hls::NoTranspose,hls::NoT
 	static const int UNROLL_FACTOR = 4;
 };
 
-int predict(FIX_T x[1][LAYER1], FIX_T w1[LAYER1][LAYER2], FIX_T w2[LAYER2][LAYER3],
-		FIX_T w3[LAYER3][LAYER4], FIX_T b1[LAYER2], FIX_T b2[LAYER3], FIX_T b3[LAYER4],
+int predict(FIX_T x[1][LAYER1], const FIX_T w1[LAYER1][LAYER2], const FIX_T w2[LAYER2][LAYER3],
+		const FIX_T w3[LAYER3][LAYER4], const FIX_T b1[LAYER2], const FIX_T b2[LAYER3], const FIX_T b3[LAYER4],
 		float Gamma, float p, int mode)
 {
 	int i, j, k, result;
@@ -41,8 +41,8 @@ int predict(FIX_T x[1][LAYER1], FIX_T w1[LAYER1][LAYER2], FIX_T w2[LAYER2][LAYER
 	float P[K], X[K], X0[K], W[K];
 
 //#pragma HLS array_partition variable=w1 cyclic factor=8 dim=1
+#pragma HLS array_partition variable=w1 complete dim=1
 //#pragma HLS array_partition variable=x cyclic factor=8 dim=2
-//#pragma HLS array_partition variable=w1 complete dim=1
 //#pragma HLS array_partition variable=x complete dim=2
 //#pragma HLS array_partition variable=w2 cyclic factor=5 dim=2
 //#pragma HLS array_partition variable=a2 cyclic factor=5 dim=2
@@ -85,12 +85,13 @@ int predict(FIX_T x[1][LAYER1], FIX_T w1[LAYER1][LAYER2], FIX_T w2[LAYER2][LAYER
 
 	// a1 = x * w1: (1, LAYER2) = (1, LAYER1) * (LAYER1, LAYER2)
 	LOOP7_1: for(i = 0; i < LAYER2; i++) {
-#pragma HLS PIPELINE II=1
+//#pragma HLS PIPELINE II=1
 		sum = 0;
 		LOOP7_2: for(j = 0; j < LAYER1; j++) {
 //#pragma HLS PIPELINE II=1
 //#pragma HLS UNROLL factor=8
-#pragma HLS UNROLL
+//#pragma HLS PIPELINE II=1
+//#pragma HLS UNROLL
 			sum += x[0][j] * w1[j][i];
 		}
 		a1[0][i] = sum + b1[i];

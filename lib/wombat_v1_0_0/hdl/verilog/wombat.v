@@ -161,11 +161,18 @@ wire       user_value_valid = status[STATUS_IP]   == 1'b1 &&
                               status[STATUS_UDP]  == 1'b1 &&
                               udp_en == 1'b1;
 wire [31:0] user_value = s_axis_tdata[USER_DATA_POS+USER_DATA_LEN-1:USER_DATA_POS];
+reg [255:0] pkt_data;
+reg [176:0] tmp_data;
+reg         pkt_en, last_reg;
 
 always @ (posedge axis_aclk) begin
 	if (!axis_resetn_vec2[0]) begin
 		s_axis_cnt <= 0;
 		status     <= 0;
+		pkt_data  <= 0;
+		tmp_data  <= 0;
+		pkt_en    <=0;
+		last_reg  <=0;
 		//user_value <= 0;
 	end else begin
 		if (s_axis_tvalid && s_axis_tready) begin
@@ -182,23 +189,36 @@ always @ (posedge axis_aclk) begin
 					$display("s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]: %d", s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]);
 					if (s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS] == UDP_PORT_TRIG) 
 						status[STATUS_PORT] <= 1'b1;
+						tmp_data[175:0] <= s_axis_tdata[255:80]
 					//user_value <= s_axis_tdata[USER_DATA_POS+USER_DATA_LEN-1:USER_DATA_POS];
 				end
 				default: ;
 			endcase
+			if (status[2:0] == 3'b111) begin
+				pkt_en <= 1;
+				pkt_data <= {s_axis_tdata[79:0], tmp[175:0]};
+				tmp_data <= s_axis_tdata[255:80];
+			end
 
 			if (s_axis_tlast) begin
 				s_axis_ready_latch <= 0;
 				s_axis_cnt         <= 0;
+				last_reg           <= 1:
 			end else begin
 				s_axis_ready_latch <= 1;
 				s_axis_cnt         <= s_axis_cnt + 1;
 			end
+		end else begin
+			last_reg <= 0;
 		end
-		// Last flit of outgoing Packet
-		if (m_axis_tvalid && m_axis_tready && m_axis_tlast) begin
+		if (last_reg) begin
+			pkt_en <= 0;
 			status <= 0;
 		end
+		// Last flit of outgoing Packet
+	//	if (m_axis_tvalid && m_axis_tready && m_axis_tlast) begin
+	//		status <= 0;
+	//	end
 	end
 end
 
@@ -264,17 +284,18 @@ wire empty_i, full_i;
 // However, 
 wire start_en = (cf_idle && !empty_i) || (cf_start && cf_ready && !empty_i) 
                    || (!cf_idle && !cf_start && !empty_i);
+wire sample_valid;
 asfifo #(
-	.DATA_WIDTH     (32),
+	.DATA_WIDTH     (256),
 	.ADDRESS_WIDTH  (4)
 ) u_fifo_i (
 	.dout     ( input_r              ), 
 	.empty    ( empty_i              ),
-	.rd_en    ( start_en             ),
+	.rd_en    ( sample_valid         ),
 	.rd_clk   ( cf_clk               ),        
-	.din      ( user_value           ),  
+	.din      ( pkt_data             ),  
 	.full     ( full_i               ),
-	.wr_en    ( user_value_valid     ),
+	.wr_en    ( pkt_en               ),
 	.wr_clk   ( axis_aclk            ),
 	.rst      ( !axis_resetn_vec2[5] ) 
 );
@@ -297,6 +318,25 @@ changefinder u_changefinder (
 	.ap_idle        ( cf_idle         )
 );
 
+wire [31:0] sample_gamma = ;
+reg [31:0] sample_p;
+reg [31:0] sample_mode;
+
+sample u_sample (
+	.ap_clk        ( cf_clk    ),
+	.ap_rst        ( !cf_rstn  ),
+	.ap_start      ( cf_start  ),
+	.ap_done       ( cf_done   ),
+	.ap_idle       ( cf_idle   ),
+	.ap_ready      ( cf_ready  ),
+	.in_V_V_dout   ( pkt_data  ),
+	.in_V_V_empty_n( !empty_i  ),
+	.in_V_V_read   ( sample_valid ),
+	.gamma         ( sample_gamma ),
+	.p             ( sample_p     ),
+	.mode          ( sample_mode  ),
+	.ap_return     ( cf_return_value )
+);
 
 always @ (posedge cf_clk) begin
 	if (!cf_rstn) begin
