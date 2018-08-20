@@ -275,10 +275,10 @@ wire cf_rstn = cf_rst_cnt == 8'hff ? 1'b1 : 1'b0;
 /***********************************************************
  *  Instance : RAMDOM based on PRBS
  ***********************************************************/
-wire [31:0] random_p;
+wire [30:0] random_p;
 
 prbs #(
-	.WIDTH(32)	   //WIDTH is the size of the data bus
+	.WIDTH(31)	   //WIDTH is the size of the data bus
 ) u_prbs (
 	.do      ( random_p    ),
 	.clk     ( cf_clk      ),

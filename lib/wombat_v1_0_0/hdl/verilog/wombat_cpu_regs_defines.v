@@ -69,15 +69,15 @@
            `define  REG_RESULT_DEFAULT			32'h0
            `define  REG_RESULT_ADDR				32'h14
 
-           `define  REG_ORDER_BITS				31:0
-           `define  REG_ORDER_WIDTH				32
-           `define  REG_ORDER_DEFAULT			32'h0
-           `define  REG_ORDER_ADDR				32'h18
+           `define  REG_GAMMA_BITS				31:0
+           `define  REG_GAMMA_WIDTH				32
+           `define  REG_GAMMA_DEFAULT			32'h0
+           `define  REG_GAMMA_ADDR				32'h18
 
-           `define  REG_SMOOTH_BITS				31:0
-           `define  REG_SMOOTH_WIDTH				32
-           `define  REG_SMOOTH_DEFAULT			32'h0
-           `define  REG_SMOOTH_ADDR				32'h1C
+           `define  REG_MDRST_BITS				15:0
+           `define  REG_MDRST_WIDTH				16
+           `define  REG_MDRST_DEFAULT			16'h0
+           `define  REG_MDRST_ADDR				32'h1C
 
            `define  REG_FORGETABILITY_BITS				31:0
            `define  REG_FORGETABILITY_WIDTH				32
