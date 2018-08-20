@@ -189,21 +189,21 @@ always @ (posedge axis_aclk) begin
 					$display("s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]: %d", s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]);
 					if (s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS] == UDP_PORT_TRIG) 
 						status[STATUS_PORT] <= 1'b1;
-						tmp_data[175:0] <= s_axis_tdata[255:80]
+						tmp_data[175:0] <= s_axis_tdata[255:80];
 					//user_value <= s_axis_tdata[USER_DATA_POS+USER_DATA_LEN-1:USER_DATA_POS];
 				end
 				default: ;
 			endcase
 			if (status[2:0] == 3'b111) begin
 				pkt_en <= 1;
-				pkt_data <= {s_axis_tdata[79:0], tmp[175:0]};
+				pkt_data <= {s_axis_tdata[79:0], tmp_data[175:0]};
 				tmp_data <= s_axis_tdata[255:80];
 			end
 
 			if (s_axis_tlast) begin
 				s_axis_ready_latch <= 0;
 				s_axis_cnt         <= 0;
-				last_reg           <= 1:
+				last_reg           <= 1;
 			end else begin
 				s_axis_ready_latch <= 1;
 				s_axis_cnt         <= s_axis_cnt + 1;
@@ -226,19 +226,8 @@ always @ (*) begin
 	s_axis_ready_latch_d = (s_axis_tvalid && s_axis_tready && s_axis_cnt == 0) ? 1 : s_axis_ready_latch;
 end
 
-wire [31:0] random_p;
-
-prbs #(
-	.WIDTH(32)	   //WIDTH is the size of the data bus
-) u_prbs (
-	.do      ( random_p    ),
-	.clk     ( cf_clk      ),
-	.advance ( 1'b1        ),
-	.rstn    ( !cf_clk_rst )
-);
-
 /***********************************************************
- *  Instance : ChangeFinder
+ *  Clock generation and Reset
  ***********************************************************/
 reg  cf_clk_reg = 0;
 wire cf_clk;
@@ -246,10 +235,7 @@ reg  cf_start;
 reg  [31:0] cf_count;
 wire cf_done, cf_ready, cf_idle;
 reg  [31:0] input_r_0;
-wire [31:0] cf_return_value;
-wire [31:0] smooth_wire;
-wire [31:0] order_wire;
-wire [31:0] forgetability_wire;
+wire [255:0] cf_return_value;
 wire cf_80m_clk, cf_125m_clk;
 // Clocking
 always @ (posedge axis_aclk)
@@ -286,25 +272,48 @@ wire cf_rstn = cf_rst_cnt == 8'h02 ? 1'b1 : 1'b0;
 wire cf_rstn = cf_rst_cnt == 8'hff ? 1'b1 : 1'b0;
 `endif
 
+/***********************************************************
+ *  Instance : RAMDOM based on PRBS
+ ***********************************************************/
+wire [31:0] random_p;
+
+prbs #(
+	.WIDTH(32)	   //WIDTH is the size of the data bus
+) u_prbs (
+	.do      ( random_p    ),
+	.clk     ( cf_clk      ),
+	.advance ( 1'b1        ),
+	.rstn    ( cf_rstn )
+);
+
+/***********************************************************
+ *  Logic for wombat and packet dataplane
+ ***********************************************************/
 wire [31:0] input_r;
 wire empty_i, full_i;
-reg [31:0] sample_mode;
+wire sample_valid;
+wire ap_return_valid;
+wire mode_reg_clear;
+wire [31:0] sample_mode;
+reg sample_mode_reg;
+
+assign sample_mode = {31'd0, sample_mode_reg};
+
 always @ (posedge cf_clk) begin
 	if (!cf_rstn) begin
-		sample_mode <= 0;
+		sample_mode_reg <= 0;
 	end else begin
 	// Tokusashi 20180816: mode_reg_clear runs on 200MHz.
 	//    This signal would be async.
 		if (mode_reg_clear) begin
-			sample_mode <= 0;
+			sample_mode_reg <= 0;
 		end else if (sample_valid) begin
-			sample_mode <= 1;
+			sample_mode_reg <= 1;
 		end
 	end
 end
 wire start_en = (cf_idle && !empty_i) || (cf_start && cf_ready && !empty_i) 
                    || (!cf_idle && !cf_start && !empty_i);
-wire sample_valid;
 asfifo #(
 	.DATA_WIDTH     (256),
 	.ADDRESS_WIDTH  (4)
@@ -320,27 +329,10 @@ asfifo #(
 	.rst      ( !axis_resetn_vec2[5] ) 
 );
 
-/* tokusashi 20170919: Please write connection */
-// todo: to change variable ORDER, SMOOTH, FORGETABILITY
-wire ap_return_valid;
-//changefinder u_changefinder (
-//	.ardim          ( ORDER           ),
-//	.smooth         ( SMOOTH          ),
-//	.forgetability  ( FORGETABILITY   ),
-//	.input_r        ( input_r_0      ),
-//	//.return_r       ( cf_return_value ),
-//	//.return_r_ap_vld( ap_return_valid ),
-//	.ap_clk         ( cf_clk          ),
-//	.ap_rst         ( !cf_rstn        ),
-//	.ap_return      ( cf_return_value ),
-//	.ap_done        ( cf_done         ),
-//	.ap_start       ( cf_start        ),
-//	.ap_ready       ( cf_ready        ),
-//	.ap_idle        ( cf_idle         )
-//);
-
-//wire [31:0] sample_gamma = ;
-//reg [31:0] sample_p;
+/***********************************************************
+ *  Instance : Wombat
+ ***********************************************************/
+wire [31:0] gamma_wire;
 
 sample u_sample (
 	.ap_clk        ( cf_clk    ),
@@ -397,7 +389,7 @@ asfifo #(
 	.empty    (empty),
 	.rd_en    (!empty),
 	.rd_clk   (axis_aclk),        
-	.din      (cf_return_value),  
+	.din      (cf_return_value[31]),  
 	.full     (full),
 	.wr_en    (cf_done),
 	//.wr_en    (ap_return_valid),
@@ -488,8 +480,8 @@ wombat_cpu_regs #(
 	.version_reg            (version_reg),
 	.return_value           (cf_count),
 	.return_value_clear     (return_value_clear),
-	.gamma_reg              (gamma_wire)
-	.mode_reg_clear         (mode_reg_clear)
+	.gamma_reg              (gamma_wire),
+	.mode_reg_clear         (mode_reg_clear),
 	.reset_reg              (reset_reg),
 	.ip2cpu_flip_reg        (ip2cpu_flip_reg),
 	.cpu2ip_flip_reg        (cpu2ip_flip_reg),
