@@ -71,6 +71,7 @@ read_verilog "./hdl/verilog/wombat_cpu_regs.v"
 read_verilog "./hdl/verilog/asfifo.v"
 read_verilog "./hdl/verilog/graycounter.v"
 read_verilog "./hdl/verilog/mmcm_wrapper.v"
+read_verilog "./hdl/verilog/prbs.v"
 
 set vfiles [exec ls ${hls_verilog}]
 foreach file ${vfiles} {

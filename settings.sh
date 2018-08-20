@@ -30,7 +30,7 @@
 
 export SUME_FOLDER=/home/aom/work/NetFPGA-SUME-dev
 export XILINX_PATH=/opt/Xilinx/Vivado/2016.4
-export NF_PROJECT_NAME=exp3
+export NF_PROJECT_NAME=inference_server
 export PROJECTS=${SUME_FOLDER}/contrib-projects
 export CONTRIB_PROJECTS=${SUME_FOLDER}/contrib-projects
 export IP_FOLDER=${SUME_FOLDER}/lib/hw/std/cores
