@@ -169,9 +169,9 @@ create_bd_addr_seg -range ${MICROBLAZE_UARTLITE_SIZEADDR} -offset ${MICROBLAZE_U
    [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] SEG_axi_uartlite_0_Reg
 
 # tokusashi 20171006 added
-create_bd_addr_seg -range ${SDAR_SIZEADDR} -offset ${SDAR_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \
+create_bd_addr_seg -range ${WOMBAT_SIZEADDR} -offset ${WOMBAT_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \
    [get_bd_addr_segs wombat_0/S_AXI/reg0] SEG_wombat_0_reg0
-create_bd_addr_seg -range ${SDAR_SIZEADDR} -offset ${SDAR_BASEADDR} [get_bd_addr_spaces nf_sume_dma/nf_riffa_dma_0/m_axi_lite] \
+create_bd_addr_seg -range ${WOMBAT_SIZEADDR} -offset ${WOMBAT_BASEADDR} [get_bd_addr_spaces nf_sume_dma/nf_riffa_dma_0/m_axi_lite] \
    [get_bd_addr_segs wombat_0/S_AXI/reg0] SEG_wombat_0_reg0
 
 create_bd_addr_seg -range ${INPUT_ARBITER_SIZEADDR} -offset ${INPUT_ARBITER_BASEADDR} [get_bd_addr_spaces mbsys/microblaze_0/Data] \
