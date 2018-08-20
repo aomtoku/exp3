@@ -20,9 +20,7 @@ module wombat_cpu_regs # (
 	// Register ports
 	input  wire [31:0]   return_value,
 	output reg           return_value_clear,
-	output reg [31:0]    order_reg,
-	output reg [31:0]    smooth_reg,
-	output reg [31:0]    forgetability_reg,
+	output reg [31:0]    gamma_reg,
 	output reg [`REG_RESET_BITS]    reset_reg,
 	input      [`REG_ID_BITS]       id_reg,
 	input      [`REG_FLIP_BITS]     ip2cpu_flip_reg,
@@ -34,6 +32,7 @@ module wombat_cpu_regs # (
 	output reg                      pktin_reg_clear,
 	input      [`REG_PKTOUT_BITS]   pktout_reg,
 	output reg                      pktout_reg_clear,
+	output reg                      mode_reg_clear,
 	//input      [`REG_LUTHIT_BITS]   luthit_reg,
 	//output reg                      luthit_reg_clear,
 	//input      [`REG_LUTMISS_BITS]  lutmiss_reg,
@@ -81,6 +80,7 @@ integer                             byte_index;
 reg                                 return_value_clear_d;
 reg                                 pktin_reg_clear_d;
 reg                                 pktout_reg_clear_d;
+reg                                 mode_reg_clear_d;
 reg                                 luthit_reg_clear_d;
 reg                                 lutmiss_reg_clear_d;
 
@@ -273,9 +273,7 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
     always @(posedge clk) begin
         if (!resetn_sync) begin
             reset_reg          <= #1 `REG_RESET_DEFAULT;
-			order_reg          <= #1 `REG_ORDER_DEFAULT;
-			smooth_reg         <= #1 `REG_SMOOTH_DEFAULT;
-			forgetability_reg  <= #1 `REG_FORGETABILITY_DEFAULT;
+			gamma_reg          <= #! `REG_GAMMA_DEFAULT;
         end
         else begin
             if (reg_wren) begin
@@ -287,31 +285,17 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
                                         reset_reg[byte_index*8 +: 8] <=  S_AXI_WDATA[byte_index*8 +: 8];
                                     end
                         end
-            			`REG_ORDER_ADDR : begin
-                                for ( byte_index = 0; byte_index <= (`REG_ORDER_WIDTH/8-1); byte_index = byte_index +1)
+            			`REG_GAMMA_ADDR : begin
+                                for ( byte_index = 0; byte_index <= (`REG_GAMMA_WIDTH/8-1); byte_index = byte_index +1)
                                     if (S_AXI_WSTRB[byte_index] == 1) begin
-                                        order_reg[byte_index*8 +: 8] <=  S_AXI_WDATA[byte_index*8 +: 8];
-                                    end
-            			end
-            			`REG_SMOOTH_ADDR : begin
-                                for ( byte_index = 0; byte_index <= (`REG_SMOOTH_WIDTH/8-1); byte_index = byte_index +1)
-                                    if (S_AXI_WSTRB[byte_index] == 1) begin
-                                        smooth_reg[byte_index*8 +: 8] <=  S_AXI_WDATA[byte_index*8 +: 8];
-                                    end
-            			end
-            			`REG_FORGETABILITY_ADDR : begin
-                                for ( byte_index = 0; byte_index <= (`REG_FORGETABILITY_WIDTH/8-1); byte_index = byte_index +1)
-                                    if (S_AXI_WSTRB[byte_index] == 1) begin
-                                        forgetability_reg[byte_index*8 +: 8] <=  S_AXI_WDATA[byte_index*8 +: 8];
+                                        gamma_reg[byte_index*8 +: 8] <=  S_AXI_WDATA[byte_index*8 +: 8];
                                     end
             			end
                 endcase
             end
             else begin
-                reset_reg          <= #1 `REG_RESET_DEFAULT;
-				order_reg          <= #1 `REG_ORDER_DEFAULT;
-				smooth_reg         <= #1 `REG_SMOOTH_DEFAULT;
-				forgetability_reg  <= #1 `REG_FORGETABILITY_DEFAULT;
+                eset_reg          <= #1 `REG_RESET_DEFAULT;
+				gamma_reg          <= #1 `REG_GAMMA_DEFAULT;
             end
         end
     end
@@ -385,15 +369,6 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
             `REG_RESULT_ADDR : begin
                 reg_data_out [`REG_RESULT_BITS] =  return_value;
             end
-            `REG_ORDER_ADDR : begin
-                reg_data_out [`REG_DEBUG_BITS] =  order_reg;
-            end
-            `REG_SMOOTH_ADDR : begin
-                reg_data_out [`REG_DEBUG_BITS] =  smooth_reg;
-            end
-            `REG_FORGETABILITY_ADDR : begin
-                reg_data_out [`REG_DEBUG_BITS] =  forgetability_reg;
-            end
             //Pktin Register
             `REG_PKTIN_ADDR : begin
                 reg_data_out [`REG_PKTIN_BITS] =  pktin_reg;
@@ -431,6 +406,8 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
         pktin_reg_clear_d <= #1 1'b0;
         pktout_reg_clear <= #1 1'b0;
         pktout_reg_clear_d <= #1 1'b0;
+		mode_reg_clear <= #1 1'b0;
+		mode_reg_clear_d <= #1 1'b0;
     //    //luthit_reg_clear <= #1 1'b0;
     //    //luthit_reg_clear_d <= #1 1'b0;
     //    //lutmiss_reg_clear <= #1 1'b0;
@@ -442,6 +419,8 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
         pktin_reg_clear_d <= #1(reg_rden && (axi_araddr==`REG_PKTIN_ADDR)) ? 1'b1 : 1'b0;
         pktout_reg_clear <= #1 pktout_reg_clear_d;
         pktout_reg_clear_d <= #1(reg_rden && (axi_araddr==`REG_PKTOUT_ADDR)) ? 1'b1 : 1'b0;
+        mode_reg_clear <= #1 mode_reg_clear_d;
+        mode_reg_clear_d <= #1(reg_rden && (axi_araddr==`REG_MDRST_ADDR)) ? 1'b1 : 1'b0;
     //    //luthit_reg_clear <= #1 luthit_reg_clear_d;
     //    //luthit_reg_clear_d <= #1(reg_rden && (axi_araddr==`REG_LUTHIT_ADDR)) ? 1'b1 : 1'b0;
     //    //lutmiss_reg_clear <= #1 lutmiss_reg_clear_d;

@@ -226,7 +226,16 @@ always @ (*) begin
 	s_axis_ready_latch_d = (s_axis_tvalid && s_axis_tready && s_axis_cnt == 0) ? 1 : s_axis_ready_latch;
 end
 
+wire [31:0] random_p;
 
+prbs #(
+	.WIDTH(32)	   //WIDTH is the size of the data bus
+) u_prbs (
+	.do      ( random_p    ),
+	.clk     ( cf_clk      ),
+	.advance ( 1'b1        ),
+	.rstn    ( !cf_clk_rst )
+);
 
 /***********************************************************
  *  Instance : ChangeFinder
@@ -279,9 +288,20 @@ wire cf_rstn = cf_rst_cnt == 8'hff ? 1'b1 : 1'b0;
 
 wire [31:0] input_r;
 wire empty_i, full_i;
-/* tokusashi 20171021: change wire logic */
-// Previous statement :  wire start_en = !cf_done && !empty_i;
-// However, 
+reg [31:0] sample_mode;
+always @ (posedge cf_clk) begin
+	if (!cf_rstn) begin
+		sample_mode <= 0;
+	end else begin
+	// Tokusashi 20180816: mode_reg_clear runs on 200MHz.
+	//    This signal would be async.
+		if (mode_reg_clear) begin
+			sample_mode <= 0;
+		end else if (sample_valid) begin
+			sample_mode <= 1;
+		end
+	end
+end
 wire start_en = (cf_idle && !empty_i) || (cf_start && cf_ready && !empty_i) 
                    || (!cf_idle && !cf_start && !empty_i);
 wire sample_valid;
@@ -299,28 +319,28 @@ asfifo #(
 	.wr_clk   ( axis_aclk            ),
 	.rst      ( !axis_resetn_vec2[5] ) 
 );
+
 /* tokusashi 20170919: Please write connection */
 // todo: to change variable ORDER, SMOOTH, FORGETABILITY
 wire ap_return_valid;
-changefinder u_changefinder (
-	.ardim          ( ORDER           ),
-	.smooth         ( SMOOTH          ),
-	.forgetability  ( FORGETABILITY   ),
-	.input_r        ( input_r_0      ),
-	//.return_r       ( cf_return_value ),
-	//.return_r_ap_vld( ap_return_valid ),
-	.ap_clk         ( cf_clk          ),
-	.ap_rst         ( !cf_rstn        ),
-	.ap_return      ( cf_return_value ),
-	.ap_done        ( cf_done         ),
-	.ap_start       ( cf_start        ),
-	.ap_ready       ( cf_ready        ),
-	.ap_idle        ( cf_idle         )
-);
+//changefinder u_changefinder (
+//	.ardim          ( ORDER           ),
+//	.smooth         ( SMOOTH          ),
+//	.forgetability  ( FORGETABILITY   ),
+//	.input_r        ( input_r_0      ),
+//	//.return_r       ( cf_return_value ),
+//	//.return_r_ap_vld( ap_return_valid ),
+//	.ap_clk         ( cf_clk          ),
+//	.ap_rst         ( !cf_rstn        ),
+//	.ap_return      ( cf_return_value ),
+//	.ap_done        ( cf_done         ),
+//	.ap_start       ( cf_start        ),
+//	.ap_ready       ( cf_ready        ),
+//	.ap_idle        ( cf_idle         )
+//);
 
-wire [31:0] sample_gamma = ;
-reg [31:0] sample_p;
-reg [31:0] sample_mode;
+//wire [31:0] sample_gamma = ;
+//reg [31:0] sample_p;
 
 sample u_sample (
 	.ap_clk        ( cf_clk    ),
@@ -332,8 +352,8 @@ sample u_sample (
 	.in_V_V_dout   ( pkt_data  ),
 	.in_V_V_empty_n( !empty_i  ),
 	.in_V_V_read   ( sample_valid ),
-	.gamma         ( sample_gamma ),
-	.p             ( sample_p     ),
+	.gamma         ( gamma_wire ),
+	.p             ( {7'd0, random_p[22:0]}     ),
 	.mode          ( sample_mode  ),
 	.ap_return     ( cf_return_value )
 );
@@ -468,9 +488,8 @@ wombat_cpu_regs #(
 	.version_reg            (version_reg),
 	.return_value           (cf_count),
 	.return_value_clear     (return_value_clear),
-	.smooth_reg             (smooth_wire),
-	.order_reg              (order_wire),
-	.forgetability_reg      (forgetability_wire),
+	.gamma_reg              (gamma_wire)
+	.mode_reg_clear         (mode_reg_clear)
 	.reset_reg              (reset_reg),
 	.ip2cpu_flip_reg        (ip2cpu_flip_reg),
 	.cpu2ip_flip_reg        (cpu2ip_flip_reg),
