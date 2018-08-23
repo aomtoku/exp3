@@ -343,7 +343,7 @@ asfifo #(
 );
 `else
 wire nearly_full, nearly_full_i;
-fallthrough_small_fifo #(
+exp3_fallthrough_small_fifo #(
 	.WIDTH           (256),
 	.MAX_DEPTH_BITS  (8)
 ) u_fifo_i (
@@ -446,7 +446,7 @@ asfifo #(
 	.rst      (!axis_resetn_vec2[1]) 
 );
 `else
-fallthrough_small_fifo #(
+exp3_fallthrough_small_fifo #(
 	.WIDTH           (32),
 	.MAX_DEPTH_BITS  (3)
 ) u_fifo_o (
