@@ -9,11 +9,14 @@ sim_top = app_tb
 outdir = build
 
 # Xilinx sources and top module
-RTL_SRC := ../hdl/verilog/sdar.v\
-           ../hdl/verilog/sdar_cpu_regs.v\
+RTL_SRC := ../hdl/verilog/wombat.v\
+           ../hdl/verilog/wombat_cpu_regs.v\
            ../hdl/verilog/asfifo.v\
            ../hdl/verilog/graycounter.v\
            ../hdl/verilog/mmcm_wrapper.v\
+           ../hdl/verilog/prbs.v\
+		   fallthrough_small_fifo.v\
+		   small_fifo.v\
            tb_sim.v\
            /opt/Xilinx/Vivado/2016.4/data/verilog/src/glbl.v
 
@@ -43,6 +46,7 @@ clean:
 	rm -f test.vcd
 	rm -rf sdar.*
 	rm -rf build
+	rm -rf synth
 
 distclean:
 	rm -rf dnskv.*
