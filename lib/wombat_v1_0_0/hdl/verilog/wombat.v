@@ -103,7 +103,7 @@ localparam ETH_DST_MAC_POS   = 0;
 localparam ETH_SRC_MAC_POS   = 48;
 localparam ETH_TYPE_POS      = 96;
 // IP Header
-localparam IP_VER_POS        = 112;
+l ocalparam IP_VER_POS        = 112;
 localparam IP_IHL_POS        = 116;
 localparam IP_TOS_POS        = 120;
 localparam IP_LEN_POS        = 128;
@@ -187,7 +187,7 @@ always @ (posedge axis_aclk) begin
 				end
 				1: begin	
 					$display("s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]: %d", s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS]);
-					if (s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS] == UDP_PORT_TRIG) 
+					if ({s_axis_tdata[UDP_DST_UPORT_POS+7:UDP_DST_UPORT_POS], s_axis_tdata[UDP_DST_UPORT_POS+15:UDP_DST_UPORT_POS+8]} == UDP_PORT_TRIG) 
 						status[STATUS_PORT] <= 1'b1;
 						tmp_data[175:0] <= s_axis_tdata[255:80];
 					//user_value <= s_axis_tdata[USER_DATA_POS+USER_DATA_LEN-1:USER_DATA_POS];
