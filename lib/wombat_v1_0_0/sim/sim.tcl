@@ -22,7 +22,7 @@ set hls_tcl "../scripts"
 set synth_dir "./synth"
 
 # Project Settings
-create_project -name sdar -force -part ${device}
+create_project -name wombat -force -part ${device}
 
 set_property top tb_sim [get_filesets sim_1]
 set_property target_language Verilog [current_project]

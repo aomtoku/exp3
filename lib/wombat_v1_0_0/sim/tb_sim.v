@@ -56,30 +56,30 @@ always @ (posedge nf_clk_i) begin
 	sys_cnt <= sys_cnt + 1;
 end
 
-always @ (posedge u_sdar.axis_aclk) begin
-	if (u_sdar.user_value_valid) begin
+always @ (posedge u_wombat.axis_aclk) begin
+	if (u_wombat.user_value_valid) begin
 		$write("%c[1;34m",27); 
-		$display("Clk[%8d] Triggered Data: %x",sys_cnt, u_sdar.user_value);
+		$display("Clk[%8d] Triggered Data: %x",sys_cnt, u_wombat.user_value);
 		$write("%c[0m",27); 
 	end
 end
 
-always @ (posedge u_sdar.axis_aclk) begin
-	if (u_sdar.return_valid) begin
+always @ (posedge u_wombat.axis_aclk) begin
+	if (u_wombat.return_valid) begin
 		$write("%c[1;34m",27); 
-		$display("Clk[%8d] Return Data: %x",sys_cnt, u_sdar.return_value);
+		$display("Clk[%8d] Return Data: %x",sys_cnt, u_wombat.return_value);
 		$write("%c[0m",27); 
 	end
 end
-always @ (posedge u_sdar.cf_clk) begin
-	if (u_sdar.cf_done) begin
+always @ (posedge u_wombat.cf_clk) begin
+	if (u_wombat.cf_done) begin
 		$write("%c[1;34m",27); 
-		$display("Clk[%8d] Output Data : %x", sys_cnt, u_sdar.cf_return_value);
+		$display("Clk[%8d] Output Data : %x", sys_cnt, u_wombat.cf_return_value);
 		$write("%c[0m",27); 
 	end
-	if (u_sdar.start_en) begin
+	if (u_wombat.start_en) begin
 		$write("%c[1;34m",27); 
-		$display("Clk[%8d] Input Data  : %x", sys_cnt, u_sdar.input_r);
+		$display("Clk[%8d] Input Data  : %x", sys_cnt, u_wombat.input_r);
 		$write("%c[0m",27); 
 	end
 end
@@ -98,7 +98,7 @@ reg         s_axis_tvalid;
 reg         s_axis_tlast ;
 wire        s_axis_tready;
 
-sdar u_sdar (
+wombat u_wombat (
 	// Global Ports
 	.axis_aclk     ( nf_clk_i  ),
 	.axis_resetn   ( sys_rst_n ),

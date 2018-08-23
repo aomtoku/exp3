@@ -69,20 +69,20 @@
            `define  REG_RESULT_DEFAULT			32'h0
            `define  REG_RESULT_ADDR				32'h14
 
+           `define  REG_MDRST_BITS				31:0
+           `define  REG_MDRST_WIDTH				32
+           `define  REG_MDRST_DEFAULT			32'h0
+           `define  REG_MDRST_ADDR				32'h18
+
+           `define  REG_TPUTRES_BITS				31:0
+           `define  REG_TPUTRES_WIDTH				32
+           `define  REG_TPUTRES_DEFAULT			32'h0
+           `define  REG_TPUTRES_ADDR				32'h1C
+
            `define  REG_GAMMA_BITS				31:0
            `define  REG_GAMMA_WIDTH				32
            `define  REG_GAMMA_DEFAULT			32'h0
-           `define  REG_GAMMA_ADDR				32'h18
-
-           `define  REG_MDRST_BITS				15:0
-           `define  REG_MDRST_WIDTH				16
-           `define  REG_MDRST_DEFAULT			16'h0
-           `define  REG_MDRST_ADDR				32'h1C
-
-           `define  REG_FORGETABILITY_BITS				31:0
-           `define  REG_FORGETABILITY_WIDTH				32
-           `define  REG_FORGETABILITY_DEFAULT			32'h0
-           `define  REG_FORGETABILITY_ADDR				32'h20
+           `define  REG_GAMMA_ADDR				32'h20
 
            `define  REG_PKTIN_BITS              31:0
            `define  REG_PKTIN_WIDTH             32

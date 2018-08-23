@@ -44,7 +44,7 @@ clean:
 	rm -rf obj_dir work
 	rm -rf vivado* .Xil
 	rm -f test.vcd
-	rm -rf sdar.*
+	rm -rf wombat.*
 	rm -rf build
 	rm -rf synth
 

@@ -19,6 +19,7 @@ module wombat_cpu_regs # (
 
 	// Register ports
 	input  wire [31:0]   return_value,
+	input  wire [31:0]   tput_reg,
 	output reg           return_value_clear,
 	output reg [31:0]    gamma_reg,
 	output reg [`REG_RESET_BITS]    reset_reg,
@@ -368,6 +369,9 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
 			// Nakamura Registers : tokusashi 20171006 : added
             `REG_RESULT_ADDR : begin
                 reg_data_out [`REG_RESULT_BITS] =  return_value;
+            end
+            `REG_TPUTRES_ADDR : begin
+                reg_data_out [`REG_RESULT_BITS] =  tput_reg;
             end
             //Pktin Register
             `REG_PKTIN_ADDR : begin

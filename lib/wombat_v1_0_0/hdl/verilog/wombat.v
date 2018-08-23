@@ -238,20 +238,20 @@ reg  [31:0] input_r_0;
 wire [255:0] cf_return_value;
 wire cf_80m_clk, cf_125m_clk;
 // Clocking
-always @ (posedge axis_aclk)
-	cf_clk_reg <= ~cf_clk_reg;
-
-BUFG u_bufg (
-	.I (cf_clk_reg),
-	.O (cf_80m_clk)
-);
-
-mmcm_wrapper u_mmcm_wrapper (
-	.inclk    ( cf_80m_clk   ),
-	.inrst    ( !axis_resetn ),
-	.dout_clk ( cf_125m_clk ),
-	.dout_rst ( )
-);
+//always @ (posedge axis_aclk)
+//	cf_clk_reg <= ~cf_clk_reg;
+//
+//BUFG u_bufg (
+//	.I (cf_clk_reg),
+//	.O (cf_80m_clk)
+//);
+//
+//mmcm_wrapper u_mmcm_wrapper (
+//	.inclk    ( cf_80m_clk   ),
+//	.inrst    ( !axis_resetn ),
+//	.dout_clk ( cf_125m_clk ),
+//	.dout_rst ( )
+//);
 
 /* tokusashi 20171211: You can choose clock 80M or 125M */
 assign cf_clk = cf_80m_clk;
@@ -314,6 +314,9 @@ always @ (posedge cf_clk) begin
 end
 wire start_en = (cf_idle && !empty_i) || (cf_start && cf_ready && !empty_i) 
                    || (!cf_idle && !cf_start && !empty_i);
+
+
+`ifdef VAR_FREQ
 asfifo #(
 	.DATA_WIDTH     (256),
 	.ADDRESS_WIDTH  (4)
@@ -328,6 +331,26 @@ asfifo #(
 	.wr_clk   ( axis_aclk            ),
 	.rst      ( !axis_resetn_vec2[5] ) 
 );
+`else
+wire nearly_full, nearly_full_i;
+fallthrough_small_fifo #(
+	.WIDTH           (256),
+	.MAX_DEPTH_BITS  (4)
+) u_fifo_i (
+	.din           ( pkt_data ),
+	.wr_en         ( pkt_en ),
+	.rd_en         ( sample_valid  ),
+
+	.dout          ( input_r ),
+	.full          ( full_i        ),
+	.nearly_full   ( nearly_full_i ),
+	.prog_full     (),
+	.empty         ( empty_i  ),
+
+	.reset         ( !axis_resetn_vec2[5] ),
+	.clk           ( axis_aclk    )
+);
+`endif /*VAR_FREQ*/
 
 /***********************************************************
  *  Instance : Wombat
@@ -335,8 +358,13 @@ asfifo #(
 wire [31:0] gamma_wire;
 
 sample u_sample (
+`ifdef VAR_FREQ
 	.ap_clk        ( cf_clk    ),
 	.ap_rst        ( !cf_rstn  ),
+`else
+	.ap_clk        ( axis_aclk    ),
+	.ap_rst        ( !axis_resetn_vec2[6]  ),
+`endif
 	.ap_start      ( cf_start  ),
 	.ap_done       ( cf_done   ),
 	.ap_idle       ( cf_idle   ),
@@ -350,8 +378,13 @@ sample u_sample (
 	.ap_return     ( cf_return_value )
 );
 
+`ifdef VAR_FREQ
 always @ (posedge cf_clk) begin
 	if (!cf_rstn) begin
+`else
+always @ (posedge axis_aclk) begin
+	if (!axis_resetn_vec2[7]) begin
+`endif 
 		cf_start <= 1'b0;
 		input_r_0 <= 0;
 	end else begin
@@ -369,8 +402,13 @@ always @ (posedge cf_clk) begin
 	end
 end
 
+`ifdef VAR_FREQ
 always @ (posedge cf_clk) begin
 	if (!cf_rstn) begin
+`else
+always @ (posedge axis_aclk) begin
+	if (!axis_resetn_vec2[4]) begin
+`endif 
 		cf_count <= 0;
 	end else begin
 		if(cf_done)		
@@ -381,6 +419,7 @@ end
 wire empty, full;
 wire [31:0] dout_return_value;
 
+`ifdef VAR_FREQ
 asfifo #(
 	.DATA_WIDTH     (32),
 	.ADDRESS_WIDTH  (3)
@@ -389,13 +428,32 @@ asfifo #(
 	.empty    (empty),
 	.rd_en    (!empty),
 	.rd_clk   (axis_aclk),        
-	.din      (cf_return_value[31]),  
+	.din      (cf_return_value[31:0]),  
 	.full     (full),
 	.wr_en    (cf_done),
 	//.wr_en    (ap_return_valid),
 	.wr_clk   (cf_clk),
 	.rst      (!axis_resetn_vec2[1]) 
 );
+`else
+fallthrough_small_fifo #(
+	.WIDTH           (32),
+	.MAX_DEPTH_BITS  (3)
+) u_fifo_o (
+	.din           ( cf_return_value[31:0] ),
+	.wr_en         ( cf_done ),
+	.rd_en         ( !empty  ),
+
+	.dout          ( dout_return_value ),
+	.full          ( full        ),
+	.nearly_full   ( nearly_full ),
+	.prog_full     (),
+	.empty         ( empty  ),
+
+	.reset         ( !axis_resetn_vec2[3] ),
+	.clk           ( axis_aclk    )
+);
+`endif /*VAR_FREQ*/
 
 reg return_valid;
 reg [31:0] return_value;
@@ -478,7 +536,8 @@ wombat_cpu_regs #(
 	// Register ports
 	.id_reg                 (id_reg),
 	.version_reg            (version_reg),
-	.return_value           (cf_count),
+	.return_value           (return_value_reg),
+	.tput_reg               (cf_count),
 	.return_value_clear     (return_value_clear),
 	.gamma_reg              (gamma_wire),
 	.mode_reg_clear         (mode_reg_clear),
