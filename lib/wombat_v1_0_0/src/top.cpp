@@ -9,6 +9,7 @@ uint256_t sample(hls::stream<uint256_t>& in, float gamma,
 
 	int res;
 	uint256_t var = 0;
+	int tmp[32];
 	//uint256_t ram[32];
 	FIX_T ram[1][784];
 
@@ -1068,8 +1069,9 @@ uint256_t sample(hls::stream<uint256_t>& in, float gamma,
 
 	for (int i = 0; i < ITERATE_FRAME; i++) {
 		var = in.read();
-		for (int j = 0; j < ITERATE_AXIS_FLIT; j++) {
-			ram[0][i+j] = (FIX_T)((var & 0xff) / 255.0);
+		//for (int j = 0; j < ITERATE_AXIS_FLIT; j++) {
+		for (int j = ITERATE_AXIS_FLIT - 1; j >= 0; j--) {
+			ram[0][(i*32)+j] = (FIX_T)((var & 0xff) / 255.0);
 			var = var >> FIX_T_BITS_WIDTH;
 		}
 	}

@@ -171,9 +171,10 @@ initial begin
 	$display("Simulation begins.");
 	$display("================================================");
 	
-	waitclk(6000);
+	waitclk(60000);
 
 	$display("================================================");
+	$display("Result: %d", u_wombat.return_value_reg);
 	$display("Simulation finishes.");
 
 	$finish;

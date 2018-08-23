@@ -6,7 +6,7 @@
 set prj "app"
 set device xc7vx690tffg1761-3
 ## Target Clock Period (ns) / ?MHz
-set clock_period 12.5
+set clock_period 5.0
 
 set src [lindex $argv 3]
 set top [lindex $argv 4]
