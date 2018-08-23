@@ -280,16 +280,21 @@ wire [30:0] random_p;
 prbs #(
 	.WIDTH(31)	   //WIDTH is the size of the data bus
 ) u_prbs (
-	.do      ( random_p    ),
+`ifdef VAR_FREQ
 	.clk     ( cf_clk      ),
-	.advance ( 1'b1        ),
-	.rstn    ( cf_rstn )
+	.rstn    ( cf_rstn     ),
+`else
+	.clk     ( axis_aclk   ),
+	.rstn    ( axis_resetn_vec[1] ),
+`endif
+	.do      ( random_p    ),
+	.advance ( 1'b1        )
 );
 
 /***********************************************************
  *  Logic for wombat and packet dataplane
  ***********************************************************/
-wire [31:0] input_r;
+wire [255:0] input_r;
 wire empty_i, full_i;
 wire sample_valid;
 wire ap_return_valid;
@@ -299,8 +304,13 @@ reg sample_mode_reg;
 
 assign sample_mode = {31'd0, sample_mode_reg};
 
+`ifdef VAR_FREQ
 always @ (posedge cf_clk) begin
 	if (!cf_rstn) begin
+`else
+always @ (posedge axis_aclk) begin
+	if (!axis_resetn_vec2[7]) begin
+`endif 
 		sample_mode_reg <= 0;
 	end else begin
 	// Tokusashi 20180816: mode_reg_clear runs on 200MHz.
@@ -335,11 +345,11 @@ asfifo #(
 wire nearly_full, nearly_full_i;
 fallthrough_small_fifo #(
 	.WIDTH           (256),
-	.MAX_DEPTH_BITS  (4)
+	.MAX_DEPTH_BITS  (8)
 ) u_fifo_i (
 	.din           ( pkt_data ),
 	.wr_en         ( pkt_en ),
-	.rd_en         ( sample_valid  ),
+	.rd_en         ( sample_valid && !empty_i ),
 
 	.dout          ( input_r ),
 	.full          ( full_i        ),
@@ -369,7 +379,7 @@ sample u_sample (
 	.ap_done       ( cf_done   ),
 	.ap_idle       ( cf_idle   ),
 	.ap_ready      ( cf_ready  ),
-	.in_V_V_dout   ( pkt_data  ),
+	.in_V_V_dout   ( input_r  ),
 	.in_V_V_empty_n( !empty_i  ),
 	.in_V_V_read   ( sample_valid ),
 	.gamma         ( gamma_wire ),
