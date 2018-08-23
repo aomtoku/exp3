@@ -273,7 +273,7 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
     always @(posedge clk) begin
         if (!resetn_sync) begin
             reset_reg          <= #1 `REG_RESET_DEFAULT;
-			gamma_reg          <= #! `REG_GAMMA_DEFAULT;
+			gamma_reg          <= #1 `REG_GAMMA_DEFAULT;
         end
         else begin
             if (reg_wren) begin
@@ -294,7 +294,7 @@ assign reg_wren = axi_wready && S_AXI_WVALID && axi_awready && S_AXI_AWVALID;
                 endcase
             end
             else begin
-                eset_reg          <= #1 `REG_RESET_DEFAULT;
+                reset_reg          <= #1 `REG_RESET_DEFAULT;
 				gamma_reg          <= #1 `REG_GAMMA_DEFAULT;
             end
         end

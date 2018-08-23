@@ -39,7 +39,7 @@
 # Vivado Launch Script
 ################################################################################
 
-PROJ = changefinder_nic
+PROJ = inference_server
 
 all:
 	@echo ""
