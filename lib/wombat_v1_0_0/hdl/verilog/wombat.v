@@ -285,7 +285,7 @@ prbs #(
 	.rstn    ( cf_rstn     ),
 `else
 	.clk     ( axis_aclk   ),
-	.rstn    ( axis_resetn_vec[1] ),
+	.rstn    ( axis_resetn_vec2[1] ),
 `endif
 	.do      ( random_p    ),
 	.advance ( 1'b1        )

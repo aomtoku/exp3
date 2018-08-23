@@ -1,8 +1,5 @@
 #!/usr/bin/perl
-###################################################################
-#  pcap2rom.pl                                                    #
-#  All rights reserved (C) 2017 Yuta Tokusashi                    #
-###################################################################
+
 use Getopt::Long 'GetOptions';
 my $rfile = "";
 my $wfile = "";
@@ -163,4 +160,3 @@ if ($wfile eq "") {
 		print DATAFILE $lline;
 	}
 }
-
