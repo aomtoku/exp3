@@ -103,7 +103,7 @@ localparam ETH_DST_MAC_POS   = 0;
 localparam ETH_SRC_MAC_POS   = 48;
 localparam ETH_TYPE_POS      = 96;
 // IP Header
-l ocalparam IP_VER_POS        = 112;
+localparam IP_VER_POS        = 112;
 localparam IP_IHL_POS        = 116;
 localparam IP_TOS_POS        = 120;
 localparam IP_LEN_POS        = 128;
