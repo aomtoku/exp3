@@ -15,8 +15,8 @@ RTL_SRC := ../hdl/verilog/wombat.v\
            ../hdl/verilog/graycounter.v\
            ../hdl/verilog/mmcm_wrapper.v\
            ../hdl/verilog/prbs.v\
-		   fallthrough_small_fifo.v\
-		   small_fifo.v\
+		   ../hdl/verilog/exp3_fallthrough_small_fifo.v\
+		   ../hdl/verilog/exp3_small_fifo.v\
            tb_sim.v\
            /opt/Xilinx/Vivado/2016.4/data/verilog/src/glbl.v
 

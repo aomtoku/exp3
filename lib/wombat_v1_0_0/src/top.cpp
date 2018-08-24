@@ -6,7 +6,7 @@
 uint256_t sample(hls::stream<uint256_t>& in, float gamma, 
 	float p, int mode)
 	{
-
+#pragma HLS stream depth=32 variable=in
 	int res;
 	uint256_t var = 0;
 	int tmp[32];
